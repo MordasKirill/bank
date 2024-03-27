@@ -27,4 +27,4 @@
 
 **COMPLETED** - приложение должно позволять выводить все транзакции, проведенные клиентом за указанный период
 
-**COMPLETED** - данные можно хранить либо в json-файле (библиотека jackson) либо в базе данных (соответствующий jdbc драйвер)
+Data is stored in MySQL db, cascade delete applied where required.
