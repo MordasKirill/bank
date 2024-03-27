@@ -88,7 +88,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             throw new CommandException(String.format("Transaction failed. Reason: %s", e.getMessage()));
         } finally {
             try {
-                connection.setAutoCommit(false);
+                connection.setAutoCommit(true);
             } catch (SQLException e) {
                 log.error("Failed to set autocommit to false.");
             }
