@@ -78,7 +78,6 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         Account receiverAccount = receiverAccountOptional.get();
         try {
             connection.setAutoCommit(false);
-            Validation.getInstance().checkAccountBalance(senderAccount, amount);
             if (isTransactionInternal(senderAccount, receiverAccount)) {
                 executeInternalTransaction(senderAccount, receiverAccount, amount);
             } else {
@@ -105,6 +104,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private void executeInternalTransaction(Account sender, Account receiver, double amount) throws SQLException, ValidationException, CommandException {
         Bank bank = getAccountBank(sender);
         double fundsWithFee = amount + getBankFeeDependingOnClientType(sender, bank);
+        Validation.getInstance().checkAccountBalance(sender, fundsWithFee);
         takeMoneyFromSender(sender, fundsWithFee);
         addMoneyToReceiver(receiver, amount);
         createTransaction(sender.getId(), receiver.getId(), amount);
@@ -113,6 +113,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private void executeExternalTransaction(Account sender, Account receiver, double amount) throws CommandException, ValidationException, SQLException {
         Bank bank = getAccountBank(sender);
         double fundsWithFee = addExternalTransferFeeToTransaction(amount, bank.getExternalFee(), bank, sender);
+        Validation.getInstance().checkAccountBalance(sender, fundsWithFee);
         takeMoneyFromSender(sender, fundsWithFee);
         addMoneyToReceiver(receiver, amount);
         createTransaction(sender.getId(), receiver.getId(), amount);
